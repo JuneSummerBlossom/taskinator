@@ -4,6 +4,7 @@ var tasksInProgressE1 = document.querySelector("#tasks-in-progress");
 var tasksCompletedE1 = document.querySelector("#tasks-completed")
 var taskIdCounter = 0;
 var pageContentE1 = document.querySelector("#page-content")
+var tasks = [];
 
 var taskFormHandler = function(event) {
   event.preventDefault();
@@ -29,13 +30,16 @@ var taskFormHandler = function(event) {
   else {
     var taskDataObj = {
       name: taskNameInput,
-      type: taskTypeInput
+      type: taskTypeInput,
+      status: "to do"
     }
     createTaskE1(taskDataObj);
   }
 }
 
 var createTaskE1 = function(taskDataObj) {
+  console.log(taskDataObj);
+  console.log(taskDataObj.status);
   // create list item
   var listItemE1 = document.createElement("li");
   listItemE1.className = "task-item";
@@ -49,6 +53,10 @@ var createTaskE1 = function(taskDataObj) {
   taskInfoE1.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
 
   listItemE1.appendChild(taskInfoE1);
+
+  taskDataObj.id = taskIdCounter;
+
+  tasks.push(taskDataObj);
 
   var taskActionsE1 = createTaskActions(taskIdCounter);
   listItemE1.appendChild(taskActionsE1);
@@ -145,6 +153,14 @@ var completeEditTask = function(taskName, taskType, taskId) {
   taskSelected.querySelector("h3.task-name").textContent = taskName;
   taskSelected.querySelector("span.task-type").textContent = taskType;
 
+  // loop through tasks array and task object with new content
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].name = taskName;
+      tasks[i].type = taskType;
+    }
+  }
+
   alert("Task Updated!");
   formE1.removeAttribute("data-task-id");
   document.querySelector("#save-task").textContent = "Add Task";
@@ -169,6 +185,15 @@ var taskStatusChangeHandler = function(event) {
   else if (statusValue === "completed") {
     tasksCompletedE1.appendChild(taskSelected);
   }
+
+  // update task's status in tasks array
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].status = statusValue;
+    }
+  }
+
+  console.log(tasks);
 }
 
 formE1.addEventListener("submit", taskFormHandler);
